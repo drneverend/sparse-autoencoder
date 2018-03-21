@@ -1,6 +1,9 @@
+CC=gcc
+CFlags=-Wall
+
 all:
-	gcc autoencoder.c layer.c network.c optimizer.c dataset.c -o autoencoder
+	$(CC) $(CFlags) autoencoder.c layer.c network.c optimizer.c dataset.c -o autoencoder
 
 clean:
-	rm *.o
+	rm *o
 	rm autoencoder

@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
   const char* datafile = argv[1];
 
   int samples = 0, width = 0, height = 0;
-  double*** data = nullptr;
+  double*** data = NULL;
   get_dataset_size(datafile, &samples, &width, &height);
   read_dataset(datafile, &data);
 
