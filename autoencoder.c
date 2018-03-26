@@ -14,16 +14,20 @@ int main(int argc, char** argv) {
   const char* datafile = argv[1];
 
   int samples = 0, width = 0, height = 0;
-  double*** data = NULL;
+  double** data = NULL;
   get_dataset_size(datafile, &samples, &width, &height);
   read_dataset(datafile, &data);
 
-  Network* network = create_network();
-  add_layer(network, 10, ActivateSigmoid);
-  add_layer(network, 5, ActivateSigmoid);
-  add_layer(network, 10, ActivateLinear);
+  Network* network = create_network(64);
+  add_layer(network, 25, ActivateSigmoid);
+  add_layer(network, 64, ActivateLinear);
 
-  fit(network, data, data);
+  OptimizerParameters params;
+  params.batchsize = 64;
+  params.epoch = 10;
+  params.lambda = 0.0001;
+  params.learning_rate = 0.1;
+  fit(network, data, data, samples, width * height, samples, width * height, &params);
 
   destroy_network(network);
   return 0;
