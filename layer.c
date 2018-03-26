@@ -8,6 +8,20 @@
 
 #define SAFE_DELETE(p) if (p != NULL) { free(p); }
 
+void rand_init_2(double** d, int rows, int cols) {
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      d[i][j] = (double)(rand()) / RAND_MAX;
+    }
+  }
+}
+
+void rand_init_1(double* d, int n) {
+  for (int i = 0; i < n; i++) {
+    d[i] = (double)(rand()) / RAND_MAX;
+  }
+}
+
 Layer* create_layer(int nodes,int input_nodes, ActivateType activate) {
   Layer* layer = (Layer*)malloc(sizeof(Layer));
   layer->nodes = nodes;
@@ -27,6 +41,9 @@ Layer* create_layer(int nodes,int input_nodes, ActivateType activate) {
 
   zero_matrix_2(layer->batch_gradient, nodes, input_nodes);
   zero_matrix_1(layer->batch_gradient_bias, nodes);
+
+  rand_init_2(layer->weights, nodes, input_nodes);
+  rand_init_1(layer->bias, nodes);
 
   return layer;
 }
