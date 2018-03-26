@@ -21,7 +21,6 @@ int main(int argc, char** argv) {
   get_dataset_size(datafile, &samples, &width, &height);
   double** data = create_2d_array(samples, width * height);
   read_dataset(datafile, data, samples, width * height);
-  printf("%f,%f,%f\n", data[0][0], data[0][1], data[1][0]);
 
   Network* network = create_network(64);
   add_layer(network, 25, ActivateSigmoid);
@@ -32,7 +31,12 @@ int main(int argc, char** argv) {
   params.epoch = 10;
   params.lambda = 0.0001;
   params.learning_rate = 0.1;
-  fit(network, data, data, samples, width * height, samples, width * height, &params);
+  int failed = fit(network, data, data, samples, width * height, samples, width * height, &params);
+  if (!failed) {
+    printf("success\n");
+  } else {
+    printf("failed with code: %d\n", failed);
+  }
 
   destroy_network(network);
   destroy_2d_array(data, samples);

@@ -18,7 +18,7 @@ Layer* create_layer(int nodes,int input_nodes, ActivateType activate) {
   layer->batch_gradient = create_2d_array(nodes, input_nodes);
 
   layer->bias = (double*)malloc(nodes * sizeof(double));
-  layer->gradient_bias = (double*)malloc(nodes * sizeof(double));
+  layer->gradient_bias = NULL; /* just keep a null pointer. it will be set during optimization */
   layer->batch_gradient_bias = (double*)malloc(nodes * sizeof(double));
 
   layer->z = (double*)malloc(nodes * sizeof(double));
@@ -28,7 +28,7 @@ Layer* create_layer(int nodes,int input_nodes, ActivateType activate) {
   zero_matrix_2(layer->batch_gradient, nodes, input_nodes);
   zero_matrix_1(layer->batch_gradient_bias, nodes);
 
-  return NULL;
+  return layer;
 }
 void destroy_layer(Layer* layer) {
   if (layer != NULL) {
@@ -39,7 +39,6 @@ void destroy_layer(Layer* layer) {
     SAFE_DELETE(layer->z)
     SAFE_DELETE(layer->a)
     SAFE_DELETE(layer->delta)
-    SAFE_DELETE(layer->gradient_bias)
     SAFE_DELETE(layer->batch_gradient_bias)
     free(layer);
   }

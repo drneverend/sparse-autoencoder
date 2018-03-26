@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "errors.h"
 #include "optimizer.h"
@@ -44,9 +45,10 @@ int fit(Network* p, double** x_train, double** y_train, int x_rows, int x_cols, 
   int nbatch = index_size / params->batchsize;
 
   for (int i = 0; i < params->epoch; i++) {
+    printf("epoch %d\n", i);
     for (int j = 0; j < nbatch; j++) {
       for (int m = 0; m < params->batchsize; m++) {
-        double* data = x_train[j * params->batchsize + m];
+        double* data = x_train[indices[j * params->batchsize + m]];
         NetworkIterator iter;
         set_forward_iterator(p, &iter);
         Layer* lastlayer = NULL;
