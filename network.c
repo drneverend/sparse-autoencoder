@@ -71,3 +71,43 @@ int has_layer(NetworkIterator* iter) {
 Layer* get_layer(NetworkIterator* iter) {
   return iter->node->layer;
 }
+
+Layer* output_layer(Network* network) {
+  if (network != NULL) {
+    return network->tail->layer;
+  } else {
+    return NULL;
+  }
+}
+
+double mse_loss(Network* network, double* y) {
+  Layer* outputlayer = output_layer(network);
+  int output_nodes = outputlayer->nodes;
+  double* output = outputlayer->a;
+
+  double loss = 0;
+  for (int i = 0; i < output_nodes; i++) {
+    loss += (y[i] - output[i]) * (y[i] - output[i]);
+  }
+
+  return loss / 2;
+}
+
+double regular_loss(Network* network) {
+  double loss = 0;
+
+  LayerNode* node = network->head;
+  while (node != NULL) {
+    Layer* layer = node->layer;
+    double** weights = layer->weights;
+    for (int i = 0; i < layer->nodes; i++) {
+      for (int j = 0; j < layer->input_nodes; j++) {
+        loss += weights[i][j] * weights[i][j];
+      }
+    }
+    node = node->next; 
+  }
+
+  return loss / 2;
+}
+

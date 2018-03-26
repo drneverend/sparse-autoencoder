@@ -3,6 +3,7 @@
 
 #include "errors.h"
 #include "optimizer.h"
+#include "network.h"
 
 void swap(int* d, int a, int b) {
   int t = d[a];
@@ -33,7 +34,7 @@ int* gen_index(int n, int batchsize, int* index_size) {
   return indices;
 }
 
-int fit(Network* p, double** x_train, double** y_train, int x_rows, int x_cols, int y_rows, int y_cols, const OptimizerParameters* params) {
+int fit(Network* network, double** x_train, double** y_train, int x_rows, int x_cols, int y_rows, int y_cols, const OptimizerParameters* params) {
   srand(12345);
 
   if (x_rows != y_rows || x_cols != y_cols) {
@@ -47,10 +48,15 @@ int fit(Network* p, double** x_train, double** y_train, int x_rows, int x_cols, 
   for (int i = 0; i < params->epoch; i++) {
     printf("epoch %d\n", i);
     for (int j = 0; j < nbatch; j++) {
+      double loss = 0;
       for (int m = 0; m < params->batchsize; m++) {
-        double* data = x_train[indices[j * params->batchsize + m]];
+        int data_index = indices[j * params->batchsize + m];
+        double* data = x_train[data_index];
+        double* y_data = y_train[data_index];
+
+        /*forward pass*/
         NetworkIterator iter;
-        set_forward_iterator(p, &iter);
+        set_forward_iterator(network, &iter);
         Layer* lastlayer = NULL;
         while (has_layer(&iter)) {
           Layer* layer = get_layer(&iter);
@@ -62,7 +68,12 @@ int fit(Network* p, double** x_train, double** y_train, int x_rows, int x_cols, 
           lastlayer = layer;
           next_layer(&iter);
         }
-        set_backward_iterator(p, &iter);
+
+        /*compute mse loss*/
+        loss += mse_loss(network, y_data);
+
+        /*compute delta*/
+        set_backward_iterator(network, &iter);
         lastlayer = NULL;
         while (has_layer(&iter)) {
           Layer* layer = get_layer(&iter);
@@ -70,7 +81,9 @@ int fit(Network* p, double** x_train, double** y_train, int x_rows, int x_cols, 
           lastlayer = layer;
           next_layer(&iter);
         }
-        set_forward_iterator(p, &iter);
+
+        /*compute weights and update weights at the last sample in the batch*/
+        set_forward_iterator(network, &iter);
         lastlayer = NULL;
         while (has_layer(&iter)) {
           Layer* layer = get_layer(&iter);
@@ -82,6 +95,9 @@ int fit(Network* p, double** x_train, double** y_train, int x_rows, int x_cols, 
           next_layer(&iter);
         }
       }
+      loss /= params->batchsize;
+      loss += params->lambda * regular_loss(network);
+      printf("loss: %f\n", loss);
     }
   }
 
@@ -89,3 +105,4 @@ int fit(Network* p, double** x_train, double** y_train, int x_rows, int x_cols, 
 
   return SUCCESS_OK;
 }
+

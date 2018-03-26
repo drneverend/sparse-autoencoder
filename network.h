@@ -31,4 +31,9 @@ void next_layer(NetworkIterator* iter);
 Layer* get_layer(NetworkIterator* iter);
 int has_layer(NetworkIterator* iter);
 
+Layer* output_layer(Network* network);
+
+double mse_loss(Network* network, double* y);
+double regular_loss(Network* network);
+
 #endif
