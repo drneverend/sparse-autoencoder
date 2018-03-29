@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
 
   OptimizerParameters params;
   params.batchsize = 64;
-  params.epoch = 10;
+  params.epoch = 2000;
   params.lambda = 0.0001;
   params.learning_rate = 0.1;
   int failed = fit(network, data, data, samples, width * height, samples, width * height, &params);

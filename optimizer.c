@@ -88,11 +88,16 @@ int fit(Network* network, double** x_train, double** y_train, int x_rows, int x_
         while (has_layer(&iter)) {
           Layer* layer = get_layer(&iter);
           gradient(layer, lastlayer, data);
-          if (m >= params->batchsize - 1) {
-            update_weights(layer, params->lambda, params->learning_rate, params->batchsize);
-          }
           lastlayer = layer;
           next_layer(&iter);
+        }
+        if (m >= params->batchsize - 1) {
+          set_forward_iterator(network, &iter);
+          while (has_layer(&iter)) {
+            Layer* layer = get_layer(&iter);
+            update_weights(layer, params->lambda, params->learning_rate, params->batchsize);
+            next_layer(&iter);
+          }
         }
       }
       loss /= params->batchsize;
