@@ -35,5 +35,6 @@ Layer* output_layer(Network* network);
 
 double mse_loss(Network* network, double* y);
 double regular_loss(Network* network);
+void write_weights(Network* network);
 
 #endif

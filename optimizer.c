@@ -102,7 +102,10 @@ int fit(Network* network, double** x_train, double** y_train, int x_rows, int x_
       }
       loss /= params->batchsize;
       loss += params->lambda * regular_loss(network);
-      printf("loss: %f\r", loss);
+      /*printf("loss: %f\r", loss);*/
+      if (j >= nbatch - 1) {
+        printf("loss: %f", loss);
+      }
     }
     printf("\n");
   }

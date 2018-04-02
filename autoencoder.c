@@ -27,8 +27,8 @@ int main(int argc, char** argv) {
   add_layer(network, 64, ActivateLinear);
 
   OptimizerParameters params;
-  params.batchsize = 64;
-  params.epoch = 2000;
+  params.batchsize = 90;
+  params.epoch = 5000;
   params.lambda = 0.0001;
   params.learning_rate = 0.1;
   int failed = fit(network, data, data, samples, width * height, samples, width * height, &params);
@@ -37,6 +37,9 @@ int main(int argc, char** argv) {
   } else {
     printf("failed with code: %d\n", failed);
   }
+
+  write_weights(network);
+  printf("written weights to files\n");
 
   destroy_network(network);
   destroy_2d_array(data, samples);

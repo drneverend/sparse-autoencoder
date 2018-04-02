@@ -111,3 +111,23 @@ double regular_loss(Network* network) {
   return loss / 2;
 }
 
+void write_layer_weights(Layer* layer, const char* filename) {
+  FILE* f = fopen(filename, "wb");
+  for (int i = 0; i < layer->nodes; i++) {
+    fwrite(layer->weights[i], sizeof(double), layer->input_nodes, f);
+  }
+  fclose(f);
+}
+
+void write_weights(Network* network) {
+  LayerNode* node = network->head;
+  int i = 0;
+  char filenames[1024] = {0};
+  while (node != NULL) {
+    Layer* layer = node->layer;
+    sprintf(filenames, "layer_weights_%d.data", i);
+    write_layer_weights(layer, filenames);
+    node = node->next; 
+    i++;
+  }
+}
